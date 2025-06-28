@@ -1,0 +1,50 @@
+{
+    "3": {
+        "phone_number": "444",
+        "first_name": "Gustav",
+        "last_name": "Becker",
+        "full_name": "Gustav Becker",
+        "state": "Germany",
+        "city": "Berchtesgaden"
+    },
+    "4": {
+        "phone_number": "123",
+        "first_name": "Serhii",
+        "last_name": "Koliada",
+        "full_name": "Serhii Koliada",
+        "state": "Ukraine",
+        "city": "Poltava"
+    },
+    "6": {
+        "phone_number": "888",
+        "first_name": "Bred",
+        "last_name": "Pitt",
+        "full_name": "Bred Pitt",
+        "state": "USA",
+        "city": "Shawnee"
+    },
+    "7": {
+        "phone_number": "007",
+        "first_name": "James",
+        "last_name": "Bond",
+        "full_name": "James Bond",
+        "state": "GB",
+        "city": "London"
+    },
+    "8": {
+        "phone_number": "123",
+        "first_name": "Serhii",
+        "last_name": "Koliada",
+        "full_name": "Serhii Koliada",
+        "state": "Germany",
+        "city": "Grossenhain"
+    },
+    "9": {
+        "phone_number": "789",
+        "first_name": "Леопольд Максиміліан Йосип Марія Арнульф",
+        "last_name": "фон Віттельсбах",
+        "full_name": "Леопольд Максиміліан Йосип Марія Арнульф фон Віттельсбах",
+        "state": "Німеччина",
+        "city": "Мюнхен"
+    }
+}
