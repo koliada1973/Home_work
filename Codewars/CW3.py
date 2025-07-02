@@ -7,20 +7,12 @@
 # 132189  -->  1 + 3 + 2 + 1 + 8 + 9 = 24  -->  2 + 4 = 6
 # 493193  -->  4 + 9 + 3 + 1 + 9 + 3 = 29  -->  2 + 9 = 11  -->  1 + 1 = 2
 
-
 def digital_root(n):
-    sum = n % 10
+    sum = 0
+    for i in str(n):
+        sum += int(i)
+    if sum // 10 > 0:
+        sum = digital_root(sum)
+    return sum
 
-    while n % 10 > 0:
-        # digital_root(digital_root(n))
-        # global sum
-        n = n % 10
-        if n == 0:
-            return n
-        else:
-            n += digital_root(n // 10)
-            return n
-
-
-
-print(digital_root(132189))
+print(digital_root(942))

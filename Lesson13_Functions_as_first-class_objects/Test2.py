@@ -1,8 +1,11 @@
-import math
+class ABC:
+    def __init__(self, a):
+        self.a = a
+    def __call__(self, b):
+        return self.a + b
 
-def cilinder_volume_function(r):
-    def volume(h):
-        return math.pi * r ** 2 * h
-    return volume
-volume_of_r10 = cilinder_volume_function(10)
-print(volume_of_r10(30))
+K = ABC(15)
+L = ABC(15)
+print(L(5), id(L), type(L))
+print(L(3), id(L), type(L))
+print(L.a)
