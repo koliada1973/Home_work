@@ -1,7 +1,6 @@
 from datetime import datetime, timedelta, date
 import re
 
-
 def smart_parse_date(s):
     """
     Розпізнає дату у різних форматах (включаючи українські назви місяців)
@@ -15,10 +14,8 @@ def smart_parse_date(s):
     s = s.replace(".", "/")
     # Українські місяці
     months_ua = {
-        "січня": 1, "лютого": 2, "березня": 3, "квітня": 4, "травня": 5,
-        "червня": 6, "липня": 7, "серпня": 8, "вересня": 9, "жовтня": 10,
-        "листопада": 11, "грудня": 12
-    }
+        "січня": 1, "лютого": 2, "березня": 3, "квітня": 4, "травня": 5,"червня": 6,
+        "липня": 7, "серпня": 8, "вересня": 9, "жовтня": 10, "листопада": 11, "грудня": 12}
     # 1. Перевірка формату "5 липня 2025"
     for month_name, month_num in months_ua.items():
         if month_name in s:
@@ -31,7 +28,8 @@ def smart_parse_date(s):
                 return date(year, month_num, day)
             except Exception:
                 continue
-        elif str(month_num) in s:
+        # 1.2 Перевірка формату типу "5.8", тобто краткої форми запису "05.08.2025"
+        elif str(month_num) in s and len(s) < 6:
             try:
                 parts = s.split("/")
                 day = int(parts[0])
@@ -65,7 +63,7 @@ def smart_parse_date(s):
         if y < 100:
             y += 2000 if y < 50 else 1900
         return date(y, m, d)
-    raise ValueError(f"Не вдалося розпізнати дату: «{s}»")
+    # raise ValueError(f"Не вдалося розпізнати дату: «{s}»")
 
 
 # Форматування дати:
@@ -135,7 +133,12 @@ def user_first_pay_date(first_pay_date1, first_pay_date2, delta_days):
         #     continue
         else:
             result = smart_parse_date(user)
-            # return result
+            if result == None:
+                print(f'Помилка визначення дати першої оплати! Залишаємо дату першої оплати як {format_date_ua(first_pay_date1, "dd.mm.yyyy")}')
+                result =  first_pay_date1
+            elif result < first_pay_date1:
+                print(f'Визначена дата раніше дати створення договору! Залишаємо дату першої оплати як {format_date_ua(first_pay_date1, "dd.mm.yyyy")}')
+                result =  first_pay_date1
             break
     return result
 
@@ -176,11 +179,7 @@ def first_pay_decorator(func, date1, day_of_pay, allowable_days=10):
             # Застосовуємо функцію add_months для отримання альтернативної дати першої оплати (через 2 місяці):
             alt_first_pay_date = func(temp_date, day_of_pay, 2)
             # Застосовуємо функцію user_first_pay_date для вирішення з користувачем яку дату приймати за дату першої оплати:
-            result = user_first_pay_date(first_pay_date, alt_first_pay_date, delta_days.days)
-            if result < date1 or result == None:
-                print(f'Помилка визначення дати першої оплати! Залишаємо дату першої оплати як {format_date_ua(first_pay_date, "dd.mm.yyyy")}')
-                return first_pay_date
-            return result
+            return user_first_pay_date(first_pay_date, alt_first_pay_date, delta_days.days)
         else:
             return first_pay_date
     return wrapper
