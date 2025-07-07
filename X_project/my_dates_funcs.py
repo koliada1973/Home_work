@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta, date
 import re
 
-def smart_parse_date(s):
+def f_parse_date(s: str) -> date:
     """
     Розпізнає дату у різних форматах (включаючи українські назви місяців)
     """
@@ -67,7 +67,7 @@ def smart_parse_date(s):
 
 
 # Форматування дати:
-def format_date_ua(d, format_string="dd.mm.yyyy"):
+def f_format_date_ua(d: date, format_string="dd.mm.yyyy") -> str:
     """
     Форматує дату в заданий формат з українськими місяцями:
     Можна задавати формати з шаблонів:
@@ -105,15 +105,19 @@ def format_date_ua(d, format_string="dd.mm.yyyy"):
 
 # Функція, що узгоджує з користувачем дату першої оплати у випадку
 # коли між датою відкриття договору та датою першої оплати - всього кілька днів:
-def user_first_pay_date(first_pay_date1, first_pay_date2, delta_days):
-    """Якщо наступна дата відстоїть від початкової менше ніж на дозволену кількість днів,
+def f_user_first_pay_date(first_pay_date1: date, first_pay_date2: date, delta_days = 10) -> date:
+    """Якщо допустити випадок, коли договір відкривається в останні дні місяця (наприклад, 31 числа),
+        а перша оплата за умовами договору має бути в перші дні місяця (наприклад 1 числа), то може скластися ситуація
+        коли перша оплата має бути буквально на наступний день; або через кілька днів від моменту відкриття договору.
+        Тому є сенс в таких випадках пропонувати клієнту змістити дату першої оплати на пізнішу дату....
+        Якщо наступна дата відстоїть від початкової менше ніж на дозволену кількість днів (10 днів за замовчанням),
         то користувачу пропонується 3 варіанти вибрати дати першої оплати:
         1) в наступному місяці,
         2) через місяць,
         3) ввести дату вручну.
     """
-    t_first_pay_date = format_date_ua(first_pay_date1, "dd.mm.yyyy")
-    t_alt_first_pay_date = format_date_ua(first_pay_date2, "dd.mm.yyyy")
+    t_first_pay_date = f_format_date_ua(first_pay_date1, "dd.mm.yyyy")
+    t_alt_first_pay_date = f_format_date_ua(first_pay_date2, "dd.mm.yyyy")
     text = f"""Перша оплата за графиком ({t_first_pay_date}) через {delta_days} днів!!!
         Залишити  дату першої оплати на {t_first_pay_date} - натисніть 0
         Перенести дату першої оплати на {t_alt_first_pay_date} - натисніть 1 
@@ -128,16 +132,13 @@ def user_first_pay_date(first_pay_date1, first_pay_date2, delta_days):
             elif user == '1':
                 result = first_pay_date2
                 break
-        # elif len(user) < 6:
-        #     print('Помилка вводу!')
-        #     continue
         else:
-            result = smart_parse_date(user)
+            result = f_parse_date(user)
             if result == None:
-                print(f'Помилка визначення дати першої оплати! Залишаємо дату першої оплати як {format_date_ua(first_pay_date1, "dd.mm.yyyy")}')
+                print(f'Помилка визначення дати першої оплати! Залишаємо дату першої оплати як {f_format_date_ua(first_pay_date1, "dd.mm.yyyy")}')
                 result =  first_pay_date1
             elif result < first_pay_date1:
-                print(f'Визначена дата раніше дати створення договору! Залишаємо дату першої оплати як {format_date_ua(first_pay_date1, "dd.mm.yyyy")}')
+                print(f'Визначена дата раніше дати створення договору! Залишаємо дату першої оплати як {f_format_date_ua(first_pay_date1, "dd.mm.yyyy")}')
                 result =  first_pay_date1
             break
     return result
@@ -145,7 +146,7 @@ def user_first_pay_date(first_pay_date1, first_pay_date2, delta_days):
 
 
 # Функція, що отримує дату, віддалену від початкової на N місяців (1 місяць за замовчанням):
-def add_months(date1, day_of_pay, months=1):
+def add_months(date1: date, day_of_pay: int, months=1) -> date:
     """
     Додає до дати задану кількість місяців з урахуванням потрібного дня місяця
     """
@@ -163,7 +164,7 @@ def add_months(date1, day_of_pay, months=1):
 
 from functools import wraps
 # Декоратор для отримання дати першої оплати:
-def first_pay_decorator(func, date1, day_of_pay, allowable_days=10):
+def f_first_pay_decorator(func, date1, day_of_pay, allowable_days=10):
     """У випадку дати першої оплати вона розраховується як і всі інші дати - додаванням місяця до попередньої дати,
     але коли від відкриття договору до першої оплати проходить меньше певної кількості днів (меньше 10 днів) -
     потрібно порадитись з користувачем..."""
@@ -179,7 +180,7 @@ def first_pay_decorator(func, date1, day_of_pay, allowable_days=10):
             # Застосовуємо функцію add_months для отримання альтернативної дати першої оплати (через 2 місяці):
             alt_first_pay_date = func(temp_date, day_of_pay, 2)
             # Застосовуємо функцію user_first_pay_date для вирішення з користувачем яку дату приймати за дату першої оплати:
-            return user_first_pay_date(first_pay_date, alt_first_pay_date, delta_days.days)
+            return f_user_first_pay_date(first_pay_date, alt_first_pay_date, delta_days.days)
         else:
             return first_pay_date
     return wrapper
