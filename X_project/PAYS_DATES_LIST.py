@@ -8,76 +8,75 @@ from X_project.my_dates_funcs import *
 # ===========================================================
 
 # Створення нового номеру оплати
-def f_next_number(list_pays: list) -> int:
+def f_наступний_номер_платежу(list_pays: list) -> int:
     last_pay = list_pays[-1]
-    return last_pay['number'] + 1
+    return last_pay['номер_платежу'] + 1
 
 
 # Створення та заповнення словника оплати
-def f_fill_payment(number: int, date: date, sum_pay: float, repayment_percent: float, sum_debt: float, sum_repayment: float, sum_remain: float) -> dict:
+def f_заповнення_платежу(номер_платежу: int, дата: date, платіж: float, погашення_відсотків: float, борг_по_відсоткам: float, погашення_кредиту: float, сума_залишку: float) -> dict:
     payment = {
-                'number': number,
-                'date': date,
-                'sum_pay': sum_pay,
-                'repayment_percent': repayment_percent,
-                'sum_debt': sum_debt,
-                'sum_repayment': sum_repayment,
-                'sum_remain': sum_remain,
+                'номер_платежу': номер_платежу,
+                'дата': дата,
+                'платіж': платіж,
+                'погашення_відсотків': погашення_відсотків,
+                'борг_по_відсоткам': борг_по_відсоткам,
+                'погашення_кредиту': погашення_кредиту,
+                'сума_залишку': сума_залишку,
                 }
     return payment
 
 
 # Розрахунок наступної оплати
-def f_next_payment(number, date1: date, date2: date, sum_pay: float, Percent: float, sum_debt: float, sum_remain: float) -> dict:
-    days = (date2 - date1).days
-    sum_percent = round(sum_remain * days * Percent/100, 2)
+def f_наступний_платіж(номер_платежу, date1: date, date2: date, платіж: float, Процент: float, борг_по_відсоткам: float, сума_залишку: float) -> dict:
+    кількість_днів = (date2 - date1).days
+    нараховані_відсотки = round(сума_залишку * кількість_днів * Процент/100, 2)
     result_list =[]
-    if sum_percent < 0:
-        sum_percent = 0
-    if sum_pay < sum_debt:
-        sum_debt = round(sum_debt - sum_pay, 2)
-        sum_remain = sum_remain
-        repayment_percent = 0
-        sum_repayment = 0
-    elif sum_pay < (sum_debt + sum_percent):
-        sum_debt = round(((sum_debt + sum_percent) - sum_pay), 2)
-        repayment_percent = sum_pay
-        sum_remain = sum_remain
-        sum_repayment = 0
+    if нараховані_відсотки < 0:
+        погашення_відсотків = 0
+    if платіж < борг_по_відсоткам:
+        борг_по_відсоткам = round(борг_по_відсоткам - платіж, 2)
+        сума_залишку = сума_залишку
+        погашення_відсотків = 0
+        погашення_кредиту = 0
+    elif платіж < (борг_по_відсоткам + нараховані_відсотки):
+        борг_по_відсоткам = round(((борг_по_відсоткам + нараховані_відсотки) - платіж), 2)
+        погашення_відсотків = платіж
+        сума_залишку = сума_залишку
+        погашення_кредиту = 0
     else:
-        sum_repayment = round(sum_pay - (sum_debt + sum_percent), 2)
-        sum_remain = round(sum_remain - sum_repayment, 2)
-        repayment_percent = sum_percent
-        sum_debt = 0
-    result_list = f_fill_payment(number, date2, sum_pay, repayment_percent, sum_debt, sum_repayment, sum_remain)
-    return result_list
+        погашення_кредиту = round(платіж - (борг_по_відсоткам + нараховані_відсотки), 2)
+        сума_залишку = round(сума_залишку - погашення_кредиту, 2)
+        погашення_відсотків = нараховані_відсотки
+        борг_по_відсоткам = 0
+    return f_заповнення_платежу(номер_платежу, date2, платіж, погашення_відсотків, борг_по_відсоткам, погашення_кредиту, сума_залишку)
 
 
-def f_pays_cycle_list(Start_date: date, Summa:float, Srok: int, Day_of_pay: int, Percent: float, delta_days = 10) -> list:
+def f_цикл_платежів(Начальна_дата: date, Сума:float, Термін_дії_договору: int, День_оплати: int, Процент: float, Допустима_кількість_днів_до_першої_оплати = 10) -> list:
     """Функція, що повертає список словників оплат та усіх ключових дат договору"""
     
     # Дату першої оплати отримуємо окремо з використанням декоратора (присвоюємо змінній temp_func декоратор date_decorator1):
-    temp_func = f_first_pay_decorator(add_months, Start_date, Day_of_pay, delta_days)
+    temp_func = f_first_pay_decorator(add_months, Начальна_дата, День_оплати, Допустима_кількість_днів_до_першої_оплати)
     # Дата першої оплати:
-    first_pay_date = temp_func(Start_date, Day_of_pay, 1)
+    дата_першої_оплати = temp_func(Начальна_дата, День_оплати, 1)
     # Дата останньої оплати за договором:
-    last_pay_date = add_months(Start_date, Day_of_pay, Srok)
+    кінцева_дата_договору = add_months(Начальна_дата, День_оплати, Термін_дії_договору)
     # Початковий варіант суми оплати = Сума кредиту / Срок
-    sum_pay = round(Summa * ((100 + Percent * 365) / 100) / Srok, 2)
+    платіж = round(Сума * ((100 + Процент * 365) / 100) / Термін_дії_договору, 2)
 
 
     # Створюємо список оплат:
-    LIST_PAYS_CYCLE = []
+    загальний_список_платежів = []
     # Перший рядок списку - дані на момент відкриття договору:
-    LIST_PAYS_CYCLE.append(f_fill_payment(0, Start_date, 0, 0, 0, 0, Summa))
+    загальний_список_платежів.append(f_заповнення_платежу(0, Начальна_дата, 0, 0, 0, 0, Сума))
     # Другий рядок списку - перша оплата:
-    pay_number = f_next_number(LIST_PAYS_CYCLE)
-    LIST_PAYS_CYCLE.append(f_next_payment(pay_number, Start_date, first_pay_date, sum_pay, Percent, 0, Summa))
+    номер_платежу = f_наступний_номер_платежу(загальний_список_платежів)
+    загальний_список_платежів.append(f_наступний_платіж(номер_платежу, Начальна_дата, дата_першої_оплати, платіж, Процент, 0, Сума))
     # Заносимо наступні оплати:
-    for i in range(Srok):
-        last_dict = LIST_PAYS_CYCLE[-1]
-        next_date = add_months(last_dict['date'], Day_of_pay, 1)
-        if next_date <= last_pay_date:
-            pay_number = f_next_number(LIST_PAYS_CYCLE)
-            LIST_PAYS_CYCLE.append(f_next_payment(pay_number, last_dict['date'], next_date, sum_pay, Percent, last_dict['sum_debt'], last_dict['sum_remain']))
-    return LIST_PAYS_CYCLE
+    for i in range(Термін_дії_договору):
+        попередній_платіж = загальний_список_платежів[-1]
+        next_date = add_months(попередній_платіж['дата'], День_оплати, 1)
+        if next_date <= кінцева_дата_договору:
+            pay_number = f_наступний_номер_платежу(загальний_список_платежів)
+            загальний_список_платежів.append(f_наступний_платіж(pay_number, попередній_платіж['дата'], next_date, платіж, Процент, попередній_платіж['борг_по_відсоткам'], попередній_платіж['сума_залишку']))
+    return загальний_список_платежів
