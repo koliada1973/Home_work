@@ -12,10 +12,10 @@ def primitive_pay(matrix_list, params) -> float:
     return pay
 
 # Перевірка чи можливо текст перетворити на дробне число:
-def is_float(s) -> bool:
+def is_float(text) -> bool:
     """Функція перевіряє текстовий рядок, чи можливо його перетворити в число з комою"""
     try:
-        float(s)
+        float(text)
         return True
     except ValueError:
         return False
@@ -28,10 +28,10 @@ def parse_float(text) -> float:
         print(f'Рядок {text} не можливо перетворити в float')
 
 # Перевірка чи можливо текст перетворити на число:
-def is_int(s) -> bool:
+def is_int(text) -> bool:
     """Функція перевіряє текстовий рядок, чи можливо його перетворити в число"""
     try:
-        int(s)
+        int(text)
         return True
     except ValueError:
         return False
@@ -423,7 +423,7 @@ def recurcive_payment_selection(matrix_list, useful_data, params) -> float:
         return recurcive_payment_selection(matrix_list, useful_data, params)
 
 # Функція пошуку ануїтетного платежу по кредиту
-def get_plan_pay(print_flag=False) -> float:
+def get_plan_pay(print_flag=True) -> float:
     """Функція пошуку ануітентного платежу по кредиту.
     Отримує необхідні для розрахунку дані або від користувача,
     або дані, що задані як аргументи при запуску з командного рядка.
