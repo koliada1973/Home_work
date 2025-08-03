@@ -8,7 +8,7 @@ class Bank:
         print(self.bank_name, self.branches_number)
 
 
-bank1 = Bank('Ivan_bank')
+bank1 = Bank('Mega_bank')
 bank2 = Bank('Honest_bank')
 
 print(bank1.bank_name)
@@ -18,5 +18,6 @@ print(bank1.branches_number)
 bank1.print_attrs()
 bank2.print_attrs()
 
-bank1.branches_number = 5000
+bank1.branches_number = 100
 bank1.print_attrs()
+bank2.print_attrs()

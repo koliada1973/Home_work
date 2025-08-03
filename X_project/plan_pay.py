@@ -3,7 +3,7 @@ import sys
 from for_plan_pay import *
 
 # Примітивний розрахунок планового платежу
-def primitive_pay(matrix_list, params) -> float:
+def primitive_pay(matrix_list:list, params:dict) -> float:
     """Функція повертає примітивний (початковий) варіант суми оплати  -
     сумма з усіма відсотками за весь срок кредиту, поділена на срок.
     Тобто платіж = (сума кредиту + відсотки за весь срок) / срок"""
@@ -12,7 +12,7 @@ def primitive_pay(matrix_list, params) -> float:
     return pay
 
 # Перевірка чи можливо текст перетворити на дробне число:
-def is_float(text) -> bool:
+def is_float(text:str) -> bool:
     """Функція перевіряє текстовий рядок, чи можливо його перетворити в число з комою"""
     try:
         float(text)
@@ -21,14 +21,14 @@ def is_float(text) -> bool:
         return False
 
 # Перетворення тексту в дробне число:
-def parse_float(text) -> float:
+def parse_float(text:str) -> float:
     if is_float(text):
         return float(text)
     else:
         print(f'Рядок {text} не можливо перетворити в float')
 
 # Перевірка чи можливо текст перетворити на число:
-def is_int(text) -> bool:
+def is_int(text:str) -> bool:
     """Функція перевіряє текстовий рядок, чи можливо його перетворити в число"""
     try:
         int(text)
@@ -37,7 +37,7 @@ def is_int(text) -> bool:
         return False
 
 # Перетворення тексту в число:
-def parse_int(text) -> int:
+def parse_int(text:str) -> int:
     if is_int(text):
         return int(text)
     else:
@@ -237,7 +237,7 @@ def fill_payment_dict(date: date, pay: float, rep_percent: float, debt: float, r
     return payment_dict
 
 # Отримання пустого списку платежів:
-def get_empty_pays_list(params) -> list:
+def get_empty_pays_list(params:dict) -> list:
     """Функція повертає список усіх ключових дат кредиту"""
     empty_matrix = []
     # Додаємо в матрицю словник попереднього платежу (тільки початкова дата та сума кредиту)

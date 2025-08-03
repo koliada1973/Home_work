@@ -51,11 +51,9 @@ def decor2(N):
             for i in range(N):
                 l.append(func())
                 print(l[i])
-            args = l
-            return tuple(zip(*args))
+            return tuple(zip(*l))
         return wrapper
     return decor1
-
 
 @decor2(3)
 def func():
