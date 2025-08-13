@@ -423,7 +423,7 @@ def recurcive_payment_selection(matrix_list, useful_data, params) -> float:
         return recurcive_payment_selection(matrix_list, useful_data, params)
 
 # Функція пошуку ануїтетного платежу по кредиту
-def get_plan_pay(print_flag=True) -> float:
+def get_plan_pay(print_flag=False) -> float:
     """Функція пошуку ануітентного платежу по кредиту.
     Отримує необхідні для розрахунку дані або від користувача,
     або дані, що задані як аргументи при запуску з командного рядка.
@@ -474,7 +474,7 @@ def get_plan_pay(print_flag=True) -> float:
     return plan_pay
 
 def main(*kwargs):
-    plan_pay = get_plan_pay()
+    plan_pay = get_plan_pay(True)
     print(f'Плановий платіж = {plan_pay}\n')
 
 if __name__=='__main__':

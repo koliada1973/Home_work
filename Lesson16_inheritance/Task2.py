@@ -13,13 +13,13 @@ class Mathematician:
         return [i**2 for i in list1]
 
     def remove_positives(self, list1):
-        return [i for i in list1 if i < 0]
+        return [i for i in list1 if i <= 0]
 
     def filter_leaps(self, list1):
         return [i for i in list1 if i % 4 == 0 and not (i % 100 == 0 and i % 400 != 0)]
 
 m = Mathematician()
-print(m.square_nums([7, 11, 5, 4]) == [49, 121, 25, 16])                # True
+print(m.square_nums([0, 7, 11, 5, 4]) == [0, 49, 121, 25, 16])                # True
 print(m.remove_positives([26, -11, -8, 13, -90]) == [-11, -8, -90])     # True
 print(m.filter_leaps([2001, 1884, 1995, 2003, 2020]) == [1884, 2020])   # True
 
