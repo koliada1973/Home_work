@@ -13,7 +13,8 @@ class File_context_manager:
         self.mode = mode
         self.file = None
         self.log_name = log_name
-        self.log_file = None
+        # self.log_file = None
+        self.__class__.counter += 1
 
     def __enter__(self):
         # Відкриття основного файлу:
@@ -21,11 +22,11 @@ class File_context_manager:
             self.file = open(self.filename, self.mode, encoding='utf-8')
         except FileNotFoundError:
             with open(self.log_name, 'a', encoding='utf-8') as log_file:
-                log_file.write(f"{time.strftime('%H:%M:%S')} Файл {self.filename} не знайдено!\n")
+                log_file.write(f"{time.strftime('%H:%M:%S')} [counter = {self.__class__.counter}] Файл {self.filename} не знайдено!\n")
             raise
         else:
             with open(self.log_name, 'a', encoding='utf-8') as log_file:
-                log_file.write(f"{time.strftime('%H:%M:%S')} Відкриття файлу {self.filename}\n")
+                log_file.write(f"{time.strftime('%H:%M:%S')} [counter = {self.__class__.counter}]  Відкриття файлу {self.filename}\n")
         return self.file
 
     def __exit__(self, exc_type, exc_val, exc_tb):
@@ -34,17 +35,21 @@ class File_context_manager:
         # Якщо помилка під час основного коду під контекстним менеджером:
         if exc_type:
             with open(self.log_name, 'a', encoding='utf-8') as log_file:
-                log_file.write(f"{time.strftime('%H:%M:%S')} Під час виконання основного коду була виявлена помилка: {exc_type.__name__} [{exc_val}]!!!\n")
+                log_file.write(f"{time.strftime('%H:%M:%S')} [counter = {self.__class__.counter}]  Під час виконання основного коду була виявлена помилка: {exc_type.__name__} [{exc_val}]!!!\n")
         with open(self.log_name, 'a', encoding='utf-8') as log_file:
-            log_file.write(f"{time.strftime('%H:%M:%S')} Закриття файлу {self.filename}\n")
-        return True
+            log_file.write(f"{time.strftime('%H:%M:%S')} [counter = {self.__class__.counter}]  Закриття файлу {self.filename}\n")
+        return False    # Повертаємо False, щоб підіймалась помилка в основному коді під менеджером.
+                        # Якщо замінити на True - помилка не буде виходити назовні
 
+# Використання:
 with File_context_manager(filename = 'new_file.txt', mode = 'w') as f:
     f.write('Рядок тексту\n')
 
+# Якщо виникає помилка в основному коді під контекстним менеджером -
+# крім повідомлення про помилку, також робиться запис в лог-файл
 with File_context_manager(filename = 'new_file.txt', mode = 'a') as f:
     f.write('Ще один рядок\n')
-    1 / 0  # Помилка буде записана в лог-файл
+    # 1 / 0  # Помилка буде записана в лог-файл
 
 # Переглянемо результат обох файлів
 with open('new_file.txt', encoding='utf-8') as f:

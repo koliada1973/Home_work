@@ -5,7 +5,7 @@
 # А також напишіть тести, коли ваш клас видає помилки або у вас виникають помилки в контекстному наборі під час виконання.
 
 import unittest
-from CM_for_Task2 import File_context_manager
+from Task1 import File_context_manager
 
 class Test_File_context_canager(unittest.TestCase):
     # Використання файлового контекстного менеджера і в кінці перевіряємо чи закрився файл:
