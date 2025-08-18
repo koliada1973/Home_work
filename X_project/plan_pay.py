@@ -423,15 +423,15 @@ def recurcive_payment_selection(matrix_list, useful_data, params) -> float:
         return recurcive_payment_selection(matrix_list, useful_data, params)
 
 # Функція пошуку ануїтетного платежу по кредиту
-def get_plan_pay(print_flag=False) -> float:
+def get_plan_pay(display_tab=False) -> float:
     """Функція пошуку ануітентного платежу по кредиту.
     Отримує необхідні для розрахунку дані або від користувача,
     або дані, що задані як аргументи при запуску з командного рядка.
-    В якості необов'язкового параметру приймає флаг друкувати матрицю платежів чи ні."""
+    В якості необов'язкового параметру приймає флаг display_tab (друкувати матрицю платежів) чи ні."""
     # Отримуємо початкові дані для розрахунку (через get_start_data)
     params = get_start_data(sys.argv[1:])
-    if 'print_flag' in params:
-        print_flag = params['print_flag']
+    if 'display_tab' in params:
+        display_tab = params['display_tab']
     # Матриця ключових дат та не заповнених платежів по кредиту
     matrix_list = get_empty_pays_list(params)
     # Дані для подальшого використання:
@@ -462,7 +462,7 @@ def get_plan_pay(print_flag=False) -> float:
     matrix_list = cycle_payments(matrix_list, useful_data, params)
     # НЕОБОВ'ЯЗКОВО!!! Для наочності друкується матриця платежів!!!
     # Друк результатів
-    if print_flag:
+    if display_tab:
         for i in matrix_list:
             print(i)
         print()

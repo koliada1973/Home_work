@@ -41,21 +41,23 @@ class File_context_manager:
         return False    # Повертаємо False, щоб підіймалась помилка в основному коді під менеджером.
                         # Якщо замінити на True - помилка не буде виходити назовні
 
-# Використання:
-with File_context_manager(filename = 'new_file.txt', mode = 'w') as f:
-    f.write('Рядок тексту\n')
 
-# Якщо виникає помилка в основному коді під контекстним менеджером -
-# крім повідомлення про помилку, також робиться запис в лог-файл
-with File_context_manager(filename = 'new_file.txt', mode = 'a') as f:
-    f.write('Ще один рядок\n')
-    # 1 / 0  # Помилка буде записана в лог-файл
+if __name__ == '__main__':
+    # Використання:
+    with File_context_manager(filename = 'new_file.txt', mode = 'w') as f:
+        f.write('Рядок тексту\n')
 
-# Переглянемо результат обох файлів
-with open('new_file.txt', encoding='utf-8') as f:
-    print('new_file.txt:')
-    print(f.read())
+    # Якщо виникає помилка в основному коді під контекстним менеджером -
+    # крім повідомлення про помилку, також робиться запис в лог-файл
+    with File_context_manager(filename = 'new_file.txt', mode = 'a') as f:
+        f.write('Ще один рядок\n')
+        # 1 / 0  # Помилка буде записана в лог-файл
 
-with open('logfile.txt', encoding='utf-8') as f:
-    print('logfile.txt:')
-    print(f.read())
+    # Переглянемо результат обох файлів
+    with open('new_file.txt', encoding='utf-8') as f:
+        print('new_file.txt:')
+        print(f.read())
+
+    with open('logfile.txt', encoding='utf-8') as f:
+        print('logfile.txt:')
+        print(f.read())
